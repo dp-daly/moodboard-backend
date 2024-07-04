@@ -14,3 +14,5 @@ class Artobject(models.Model):
         related_name = "artobjects",
         on_delete=models.CASCADE
     )
+
+    #may not need owner here, but leaving for now

@@ -52,9 +52,5 @@ class ArtobjectDetailView(APIView):
 
     def delete(self, _request, pk):
         artobject_to_delete = self.get_artobject(pk=pk)
-
-        # if artobject_to_delete.owner != request.user:
-        #     return Response(status=status.HTTP_401_UNAUTHORIZED)
-        
         artobject_to_delete.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
