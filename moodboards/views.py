@@ -6,16 +6,21 @@ from rest_framework.exceptions import NotFound
 from .models import Moodboard
 from .serializers.common import MoodboardSerializer
 from .serializers.populated import PopulatedMoodboardSerializer
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+
 
 
 class MoodboardListView(APIView):
 
-    def get(self, _request):
-        moodboard = Moodboard.objects.all()
-        serialized_moodboard = MoodboardSerializer(moodboard, many=True)
-        return Response(serialized_moodboard.data, status=status.HTTP_200_OK)
+    permission_classes = ( IsAuthenticatedOrReadOnly, )
+
+    def get(self, request):
+        moodboards = Moodboard.objects.filter(createdby=request.user)
+        serialized_moodboards = MoodboardSerializer(moodboards, many=True)
+        return Response(serialized_moodboards.data, status=status.HTTP_200_OK)
     
     def post(self, request):
+        request.data["createdby"] = request.user.id
         moodboard_to_add = MoodboardSerializer(data=request.data)
         try: 
             moodboard_to_add.is_valid()

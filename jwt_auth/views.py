@@ -24,7 +24,6 @@ class RegisterView(APIView):
 class LoginView(APIView):
 
     def post(self, request):
-        # get the data you need out of the request object (email, password)
         email = request.data.get('email')
         password = request.data.get('password')
 
@@ -43,6 +42,8 @@ class LoginView(APIView):
         token = jwt.encode(
             {
                 'sub': user_to_login.id,
+                'username': user_to_login.username,
+                'name': user_to_login.preferred_name,
                 'exp': int(dt.strftime('%s'))
             },
             settings.SECRET_KEY,
