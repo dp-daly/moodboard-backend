@@ -9,7 +9,6 @@ from .serializers.populated import PopulatedMoodboardSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 
-
 class MoodboardListView(APIView):
 
     permission_classes = ( IsAuthenticatedOrReadOnly, )

@@ -1,5 +1,5 @@
 from .common import ArtobjectSerializer
-from jwt_auth.serializers import UserSerializer
+from moodboards.serializers.common import MoodboardSerializer
 
 class PopulatedArtobjectSerializer(ArtobjectSerializer):
-    owner = UserSerializer()
+    moodboard = MoodboardSerializer()
