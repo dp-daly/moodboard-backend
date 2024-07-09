@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.exceptions import NotFound
+from django.shortcuts import get_object_or_404
 
 from .models import Moodboard
 from .serializers.common import MoodboardSerializer
@@ -31,15 +32,23 @@ class MoodboardListView(APIView):
         
 class MoodboardDetailView(APIView):
     
-    def get_moodboard(self, pk):
-        try:
-            return Moodboard.objects.get(pk=pk)
-        except Moodboard.DoesNotExist:
-            raise NotFound(detail="Moodboard not found.")
+    # def get_moodboard(self, pk):
+    #     try:
+    #         return Moodboard.objects.get(pk=pk)
+    #     except Moodboard.DoesNotExist:
+    #         raise NotFound(detail="Moodboard not found.")
     
-    def get(self, _request, pk):
+    # def get(self, _request, pk):
+    #     moodboard = self.get_moodboard(pk=pk)
+    #     serialized_moodboard = PopulatedMoodboardSerializer(moodboard)
+    #     return Response(serialized_moodboard.data, status=status.HTTP_200_OK)
+
+    def get_moodboard(self, pk):
+        return get_object_or_404(Moodboard.objects.prefetch_related('artobjects'), pk=pk)
+    
+    def get(self, request, pk):
         moodboard = self.get_moodboard(pk=pk)
-        serialized_moodboard = PopulatedMoodboardSerializer(moodboard)
+        serialized_moodboard = MoodboardSerializer(moodboard)
         return Response(serialized_moodboard.data, status=status.HTTP_200_OK)
     
     def put(self, request, pk):
