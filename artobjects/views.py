@@ -27,17 +27,6 @@ class ArtobjectListView(APIView):
 
 class ArtobjectDetailView(APIView):
 
-    # def get_artobject(self, pk):
-    #     try:
-    #         return Artobject.objects.get(pk=pk)
-    #     except Artobject.DoesNotExist:
-    #         raise NotFound(detail="Art object not found.")
-
-    # def get(self, _request, pk):
-    #     artobject = self.get_artobject(pk=pk)
-    #     serialized_artobject = PopulatedArtobjectSerializer(artobject)
-    #     return Response(serialized_artobject.data, status=status.HTTP_200_OK)
-
     def get_artobject(self, pk):
         try:
             return Artobject.objects.get(pk=pk)

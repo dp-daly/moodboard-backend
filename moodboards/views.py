@@ -5,6 +5,7 @@ from rest_framework.exceptions import NotFound
 from django.shortcuts import get_object_or_404
 
 from .models import Moodboard
+from artobjects.models import Artobject
 from .serializers.common import MoodboardSerializer
 from .serializers.populated import PopulatedMoodboardSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -31,17 +32,6 @@ class MoodboardListView(APIView):
             return Response(e.__dict__ if e.__dict__ else str(e), status=status.HTTP_422_UNPROCESSABLE_ENTITY)
         
 class MoodboardDetailView(APIView):
-    
-    # def get_moodboard(self, pk):
-    #     try:
-    #         return Moodboard.objects.get(pk=pk)
-    #     except Moodboard.DoesNotExist:
-    #         raise NotFound(detail="Moodboard not found.")
-    
-    # def get(self, _request, pk):
-    #     moodboard = self.get_moodboard(pk=pk)
-    #     serialized_moodboard = PopulatedMoodboardSerializer(moodboard)
-    #     return Response(serialized_moodboard.data, status=status.HTTP_200_OK)
 
     def get_moodboard(self, pk):
         return get_object_or_404(Moodboard.objects.prefetch_related('artobjects'), pk=pk)
@@ -66,3 +56,16 @@ class MoodboardDetailView(APIView):
         moodboard_to_delete = self.get_moodboard(pk=pk)
         moodboard_to_delete.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+        
+class RemoveArtobjectFromMoodboardView(APIView):
+
+    def delete(self, request, pk, artobject_id):
+        moodboard = get_object_or_404(Moodboard, pk=pk)
+        artobject = get_object_or_404(Artobject, pk=artobject_id)
+
+        if artobject in moodboard.artobjects.all():
+            moodboard.artobjects.remove(artobject)
+            moodboard.save()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response({'detail': 'Object not found in this moodboard.'}, status=status.HTTP_404_NOT_FOUND)
